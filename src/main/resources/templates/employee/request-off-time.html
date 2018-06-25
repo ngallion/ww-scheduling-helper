@@ -1,0 +1,33 @@
+
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org/">
+<head th:replace="fragments :: head"></head>
+
+<body class="container">
+
+<h1 th:text="${title}">Default Title</h1>
+
+<nav th:replace="fragments :: navigation"></nav>
+
+
+<form method="post" action="employee/request-off-time" class="form req-off-form" th:object="${requestOff}">
+    <div class="form-group">
+        <label th:for="date">Date:</label>
+        <input class="form-control" type="date" th:field="*{date}" />
+    </div>
+    <div class="form-group">
+        <label th:for="startTime">Start Time:</label>
+        <input class="form-control" type="time" th:field="*{startTime}" />
+    </div>
+    <div class="form-group">
+        <label th:for="endTime">End Time:</label>
+        <input class="form-control" type="time" th:field="*{endTime}" />
+    </div>
+
+    <input type="hidden" th:value="${employeeId}" />
+
+    <input type="submit" value="Submit Request" />
+</form>
+
+</body>
+</html>

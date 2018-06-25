@@ -1,0 +1,27 @@
+.body-content {
+    margin-top: 72px;
+}
+
+td, th {
+    padding: 10px;
+}
+
+tr:nth-child(odd) {
+    background-color: #e4e4e4;
+}
+
+table.employee-listing {
+    margin: 30px auto;
+    border: 1px solid #e4e4e4;
+    width: 40%;
+}
+
+table.employee-listing td:last-child {
+    width: 40%;
+}
+
+.req-off-form {
+    display: inline-block;
+    width: 30%;
+
+}
