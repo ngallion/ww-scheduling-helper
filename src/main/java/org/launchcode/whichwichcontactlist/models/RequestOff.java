@@ -2,7 +2,6 @@ package org.launchcode.whichwichcontactlist.models;
 
 
 import javax.persistence.*;
-import javax.validation.constraints.NotNull;
 import java.sql.Date;
 import java.sql.Time;
 
@@ -16,7 +15,6 @@ public class RequestOff {
     @ManyToOne
     private Employee employee;
 
-    @NotNull(message = "Must enter date")
     private Date date;
 
     private Time startTime;

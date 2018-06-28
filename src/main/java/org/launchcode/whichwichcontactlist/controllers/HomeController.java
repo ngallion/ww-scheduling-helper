@@ -7,11 +7,16 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.Errors;
+import org.springframework.web.bind.annotation.CookieValue;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
+import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
+import java.io.IOException;
 
 @Controller
 @RequestMapping(value = "home")
@@ -20,37 +25,28 @@ public class HomeController {
     @Autowired
     private EmployeeDao employeeDao;
 
+    private void RedirectIfNotLoggedIn(String username, HttpServletResponse response) {
+        try{
+            if (username.equals("none")) {
+                response.sendRedirect("/login");
+            }
+        }
+        catch (IOException e) {
+            e.getMessage();
+        }
+
+    }
+
     @RequestMapping(value = "")
-    public String displayHomePage(Model model){
+    public String displayHomePage(Model model, @CookieValue(value = "user", defaultValue = "none") String username,
+                                  HttpServletResponse response){
+
+        RedirectIfNotLoggedIn(username, response);
 
         model.addAttribute("title", "Which Wich Contact List");
         model.addAttribute("employees", employeeDao.findAll());
 
         return "home/index";
-
-    }
-
-    @RequestMapping(value = "login", method = RequestMethod.GET)
-    public String displayLoginForm(Model model){
-
-        model.addAttribute("title", "Login");
-        model.addAttribute(new Login());
-
-        return "home/login";
-
-    }
-
-    @RequestMapping(value = "login", method = RequestMethod.POST)
-    public String processLoginForm(@ModelAttribute Login loginAttempt, Errors errors, Model model) {
-
-        Employee attemptedEmployeeLogin = employeeDao.findByEmail(loginAttempt.getUsername());
-
-        if (attemptedEmployeeLogin == null || !attemptedEmployeeLogin.getPassword().equals(loginAttempt.getPassword())) {
-            model.addAttribute("error", "Invalid username or password");
-            return "home/login";
-        }
-
-        return "redirect:/home";
 
     }
 

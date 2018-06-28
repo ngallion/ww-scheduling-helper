@@ -9,17 +9,17 @@
 <nav th:replace="fragments :: navigation"></nav>
 
 
-<form method="post" action="employee/request-off-day" class="form req-off-form" th:object="${requestOff}">
+<form method="post" action="request-off-day" class="form req-off-form" th:object="${requestOff}">
     <div class="form-group">
         <label th:for="date">Start Date:</label>
         <input class="form-control" type="date" th:field="*{date}" />
     </div>
     <div class="form-group">
-        <label th:for="startTime">End Date:</label>
-        <input class="form-control" type="time" th:value="${endDate}" />
+        <label th:for="endDate">End Date:</label>
+        <input class="form-control" name="endDate" type="date" th:value="${endDate}" />
     </div>
 
-    <input type="hidden" th:value="${employeeId}" />
+    <input type="hidden" name="employeeId" th:value="${employeeId}" />
 
     <input type="submit" value="Submit Request" />
 </form>
