@@ -1,10 +1,35 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org/">
-<head>
-    <meta charset="UTF-8"/>
-    <title></title>
-</head>
-<body>
+<head th:replace="fragments :: head"></head>
+
+<body class="container">
+
+<h1 th:text="${title}">Default Title</h1>
+
+<nav th:replace="fragments :: navigation"></nav>
+
+<br />
+
+<table class="table">
+    <thead>
+    <tr>
+        <th>Date</th>
+        <th>Start Time</th>
+        <th>End Time</th>
+    </tr>
+    <tr>
+        <th></th>
+        <th></th>
+        <th></th>
+    </tr>
+
+    </thead>
+    <tr th:each="requestOff : ${requestsOff}">
+        <td th:text="${requestOff.date}"></td>
+        <td th:text="${requestOff.startTime}"></td>
+        <td th:text="${requestOff.endTime}"></td>
+    </tr>
+</table>
 
 </body>
 </html>
