@@ -6,47 +6,60 @@
 
 <h1 th:text="${title}">Default Title</h1>
 
-<nav th:replace="fragments :: navigation"></nav>
+<div class="container" style="padding: 1.2em">
 
-<form method="post" style="max-width:400px;" th:object="${employee}">
-    <div class="form-group">
-        <label th:for="firstName">First Name</label>
-        <input class="form-control" th:field="*{firstName}" />
-        <span th:errors="*{firstName}" class="error"></span>
-    </div>
-    <div class="form-group">
-        <label th:for="lastName">Last Name</label>
-        <input class="form-control" th:field="*{lastName}" />
-        <span th:errors="*{lastName}" class="error"></span>
-    </div>
-    <div class="form-group">
-        <label th:for="email">Email</label>
-        <input class="form-control" th:field="*{email}" />
-        <span th:errors="*{email}" class="error"></span>
-    </div>
-    <div class="form-group">
-        <label th:for="password">Password</label>
-        <input type="password" class="form-control" th:field="*{password}" />
-        <span th:errors="*{password}" class="error"></span>
-    </div>
-    <div class="form-group">
-        <label th:for="verifyPassword">Verify Password</label>
-        <input type="password" class="form-control" name="verifyPassword" th:value="${verifyPassword}" />
-        <span th:text="${verifyError}" class="error"></span>
-    </div>
-    <div class="form-group">
-        <label th:for="jobTitle">Job Title</label>
-        <input class="form-control" th:field="*{jobTitle}" />
-        <span th:errors="*{jobTitle}" class="error"></span>
-    </div>
-    <div class="form-group">
-        <label th:for="phoneNumber">Phone Number (just numbers, no dashes or spaces)</label>
-        <input class="form-control" th:field="*{phoneNumber}" />
-        <span th:errors="*{phoneNumber}" class="error"></span>
-    </div>
+    <form method="post" style="max-width:400px;" th:object="${employee}">
+        <span th:text="${storeIdError}" class="error"></span>
+        <div class="form-group">
+            <label th:for="firstName">First Name</label>
+            <input class="form-control" th:field="*{firstName}" />
+            <span th:errors="*{firstName}" class="error"></span>
+        </div>
+        <div class="form-group">
+            <label th:for="lastName">Last Name</label>
+            <input class="form-control" th:field="*{lastName}" />
+            <span th:errors="*{lastName}" class="error"></span>
+        </div>
+        <div class="form-group">
+            <label th:for="email">Email</label>
+            <input class="form-control" th:field="*{email}" />
+            <span th:errors="*{email}" class="error"></span>
+        </div>
+        <div class="form-group">
+            <label th:for="password">Password</label>
+            <input type="password" class="form-control" th:field="*{password}" />
+            <span th:errors="*{password}" class="error"></span>
+        </div>
+        <div class="form-group">
+            <label th:for="verifyPassword">Verify Password</label>
+            <input type="password" class="form-control" name="verifyPassword" th:value="${verifyPassword}" />
+            <span th:text="${verifyError}" class="error"></span>
+        </div>
+        <div class="form-group">
+            <label th:for="jobTitle">Job Title</label>
+            <input class="form-control" th:field="*{jobTitle}" />
+            <span th:errors="*{jobTitle}" class="error"></span>
+        </div>
+        <div class="form-group">
+            <label th:for="phoneNumber">Phone Number (just numbers, no dashes or spaces)</label>
+            <input class="form-control" th:field="*{phoneNumber}" />
+            <span th:errors="*{phoneNumber}" class="error"></span>
+        </div>
+        <div class="form-group">
+            <label th:for="storeId">Store ID</label>
+            <input type="password" class="form-control" name="storeId" />
+            <span th:text="${storeIdError}" class="error"></span>
+        </div>
 
-    <input type="submit" value="Add Employee" />
-</form>
+        <input type="submit" value="Add Employee" />
+
+        <br />
+    </form>
+
+</div>
+<div>
+    <br />
+</div>
 
 </body>
 </html>

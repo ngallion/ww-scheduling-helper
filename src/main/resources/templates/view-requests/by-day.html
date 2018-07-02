@@ -9,26 +9,25 @@
 <div class="container">
 <h1 th:text="${title}">Default Title</h1>
 
+<form method="post" action="by-day">
+    <input type="date" name="dateToView" />
+    <input type="submit" value="View Day" />
+</form>
 <br />
-
+<span th:unless="${requestOffs} and ${requestOffs.size()}">No request offs for selected date.</span>
 <table class="table table-hover">
     <tr>
+        <td><strong>Employee</strong></td>
         <td><strong>Date</strong></td>
         <td><strong>Start Time</strong></td>
         <td><strong>End Time</strong></td>
-        <td><strong>Remove</strong></td>
     </tr>
-    <tr th:each="requestOff : ${requestsOff}">
+    <tr th:each="requestOff : ${requestOffs}">
         <div th:if="${requestOff.isActive()}">
+            <td th:text="${requestOff.employee.firstName} + ' ' + ${requestOff.employee.lastName}"></td>
             <td th:text="${requestOff.getHumanReadableDate()}"></td>
             <td th:text="${requestOff.getHumanReadableStartTime()}"></td>
             <td th:text="${requestOff.getHumanReadableEndTime()}"></td>
-            <td>
-                <form method="post" action="request-off/remove-request">
-                    <input type="hidden" name="requestOffIdForRemoval" th:value="${requestOff.id}" />
-                    <input type="submit" value="Remove" />
-                </form>
-            </td>
         </div>
     </tr>
 </table>

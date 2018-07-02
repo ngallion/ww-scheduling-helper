@@ -2,18 +2,41 @@
     margin-top: 72px;
 }
 
+.error {
+    color: red;
+}
+
+h1.small-table-page {
+    width: 50%;
+
+}
+
+.container div.title-head {
+    text-align: center;
+}
+
+h1 {
+    margin: 1em auto;
+    align: center;
+}
+
+.user {
+    width: 100%;
+    text-align: right;
+    padding-bottom: 3em;
+}
+
 td, th {
     padding: 10px;
 }
 
-tr:nth-child(odd) {
+table.employee-listing tr:nth-child(even) {
     background-color: #e4e4e4;
 }
 
 table.employee-listing {
-    margin: 30px auto;
-    border: 1px solid #e4e4e4;
-    width: 40%;
+    margin: auto;
+    width: 50%;
 }
 
 table.employee-listing td:last-child {

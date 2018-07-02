@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org/">
+<head th:replace="fragments :: head"></head>
+
+<body>
+
+<nav th:replace="fragments :: navigation"></nav>
+
+<div class="container">
+    <h1 th:text="${title}">Default Title</h1>
+
+    <table class="table employee-listing">
+        <tr>
+            <th>
+                Employee
+            </th>
+            <th>
+                Deactivate
+            </th>
+        </tr>
+        <tr th:each="employee : ${employees}">
+            <td th:text="${employee.firstName} + ' ' + ${employee.lastName}"></td>
+            <td>
+                <form method="post" action="remove-employee">
+                    <input type="hidden" name="employeeIdForRemoval" th:value="${employee.id}" />
+                    <input type="submit" value="Remove" />
+                </form>
+            </td>
+        </tr>
+    </table>
+</div>
+</body>
+</html>

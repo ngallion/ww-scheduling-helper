@@ -2,31 +2,33 @@
 <html lang="en" xmlns:th="http://www.thymeleaf.org/">
 <head th:replace="fragments :: head"></head>
 
-<body class="container">
-
-<h1 th:text="${title}">Default Title</h1>
+<body>
 
 <nav th:replace="fragments :: navigation"></nav>
 
+    <div class="container">
 
+        <div class="title-head"><h1 class="small-table-page" th:text="${title}">Default Title</h1></div>
 
-<table class="table employee-listing" th:object="${employee}">
-    <tr>
-        <th colspan="2" th:text="*{firstName} + ' ' + *{lastName}"></th>
-    </tr>
-    <tr>
-        <td>Email</td>
-        <td th:text="*{email}"></td>
-    </tr>
-    <tr>
-        <td>Job Title</td>
-        <td th:text="*{jobTitle}"></td>
-    </tr>
-    <tr>
-        <td>Phone Number</td>
-        <td th:text="*{phoneNumber}"></td>
-    </tr>
-</table>
-
+            <div class="table-responsive">
+                <table class="table employee-listing" th:object="${employee}">
+                    <tr>
+                        <th colspan="2" th:text="*{firstName} + ' ' + *{lastName}"></th>
+                    </tr>
+                    <tr>
+                        <td>Email</td>
+                        <td th:text="*{email}"></td>
+                    </tr>
+                    <tr>
+                        <td>Job Title</td>
+                        <td th:text="*{jobTitle}"></td>
+                    </tr>
+                    <tr>
+                        <td>Phone Number</td>
+                        <td th:text="*{phoneNumber}"></td>
+                    </tr>
+                </table>
+            </div>
+    </div>
 </body>
 </html>

@@ -38,7 +38,9 @@ public class LoginController {
 
         Employee attemptedEmployeeLogin = employeeDao.findByEmail(loginAttempt.getUsername());
 
-        if (attemptedEmployeeLogin == null || !attemptedEmployeeLogin.getPassword().equals(loginAttempt.getPassword())) {
+        if (attemptedEmployeeLogin == null ||
+                !attemptedEmployeeLogin.getPassword().equals(loginAttempt.getPassword()) ||
+                !attemptedEmployeeLogin.isActive()) {
             model.addAttribute("error", "Invalid username or password");
             return "login/index";
         }

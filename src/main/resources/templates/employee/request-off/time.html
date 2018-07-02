@@ -3,14 +3,14 @@
 <html lang="en" xmlns:th="http://www.thymeleaf.org/">
 <head th:replace="fragments :: head"></head>
 
-<body class="container">
-
-<h1 th:text="${title}">Default Title</h1>
+<body>
 
 <nav th:replace="fragments :: navigation"></nav>
-
+<div class="container">
+<h1 th:text="${title}">Default Title</h1>
 
 <form method="post" action="time" class="form req-off-form">
+    <span th:text="${error}" class="error"></span>
     <div class="form-group">
         <label th:for="date">Date:</label>
         <input class="form-control" type="date" name="date" th:value="${date}" />
@@ -28,6 +28,6 @@
 
     <input type="submit" value="Submit Request" />
 </form>
-
+</div>
 </body>
 </html>

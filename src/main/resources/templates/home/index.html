@@ -2,26 +2,31 @@
 <html lang="en" xmlns:th="http://www.thymeleaf.org/">
 <head th:replace="fragments :: head"></head>
 
-<body class="container">
+    <body>
 
-<h1 th:text="${title}">Default Title</h1>
+    <nav th:replace="fragments :: navigation"></nav>
 
-<nav th:replace="fragments :: navigation"></nav>
+        <div class="container">
+            <div class="title-head">
+                <h1 class="small-table-page" th:text="${title}">Default Title</h1>
+            </div>
+                <div class="table-responsive">
+                    <table class="table employee-listing">
+                        <tr>
+                            <th>
+                                Employee
+                            </th>
+                            <th>
+                                Contact Number
+                            </th>
+                        </tr>
+                        <tr th:each="employee : ${employees}">
+                            <td th:text="${employee.firstName} + ' ' + ${employee.lastName}"></td>
+                            <td th:text="${employee.phoneNumber}"></td>
+                        </tr>
+                    </table>
+                </div>
 
-<table class="table employee-listing">
-    <tr>
-        <th>
-            Employee
-        </th>
-        <th>
-            Contact Number
-        </th>
-    </tr>
-    <tr th:each="employee : ${employees}">
-        <td th:text="${employee.firstName} + ' ' + ${employee.lastName}"></td>
-        <td th:text="${employee.phoneNumber}"></td>
-    </tr>
-</table>
-
-</body>
+        </div>
+    </body>
 </html>

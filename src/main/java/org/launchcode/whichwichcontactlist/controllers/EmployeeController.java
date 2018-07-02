@@ -8,6 +8,7 @@ import org.launchcode.whichwichcontactlist.models.data.RequestOffDao;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.validation.Errors;
 import org.springframework.web.bind.annotation.*;
 
@@ -16,13 +17,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 
 import java.io.IOException;
-import java.sql.Time;
-import java.time.LocalDate;
-import java.time.LocalTime;
-import java.time.Period;
-import java.util.Date;
 
-import static java.util.Calendar.AM;
 
 @Controller
 @RequestMapping("employee")
@@ -33,7 +28,6 @@ public class EmployeeController {
 
     @Autowired
     private RequestOffDao requestOffDao;
-
 
     private void RedirectIfNotLoggedIn(String username, HttpServletResponse response) {
         try{
@@ -55,6 +49,12 @@ public class EmployeeController {
 
         model.addAttribute("title", "Employee Profile");
         model.addAttribute("employee", employeeDao.findByEmail(username));
+        if (username.equals("none")) {
+            model.addAttribute("username", "guest");
+        }
+        else {
+            model.addAttribute("username",employeeDao.findByEmail(username).getFirstName());
+        }
 
         return "employee/index";
 
@@ -79,27 +79,104 @@ public class EmployeeController {
         model.addAttribute("title", "Create New Employee Profile");
         model.addAttribute(new Employee());
 
+
         return "employee/add";
 
     }
 
     @RequestMapping(value = "add", method = RequestMethod.POST)
-    public String processAddEmployeeForm(Model model, @ModelAttribute @Valid Employee newEmployee,
-                                         @RequestParam String verifyPassword, Errors errors) {
+    public String processAddEmployeeForm(Model model, @ModelAttribute @Valid Employee employee, Errors errors,
+                                         @RequestParam String verifyPassword, @RequestParam String storeId) {
 
         if (errors.hasErrors()) {
             model.addAttribute("title", "Create New Employee Profile");
             return "employee/add";
         }
-        if (!verifyPassword.equals(newEmployee.getPassword())) {
+        if (!verifyPassword.equals(employee.getPassword())) {
+            model.addAttribute("title", "Create New Employee Profile");
             model.addAttribute("verifyError", "Passwords must match");
             return "employee/add";
         }
 
-        employeeDao.save(newEmployee);
+        if (!storeId.equals("chesterfield317")) {
+            model.addAttribute("title", "Create New Employee Profile");
+            model.addAttribute("storeIdError", "Incorrect store id");
+            return "employee/add";
+        }
 
-        return "redirect:" + newEmployee.getId();
+        employee.setActive();
 
+        employeeDao.save(employee);
+
+        return "redirect:" + employee.getId();
+
+    }
+
+    @RequestMapping(value = "manage", method = RequestMethod.GET)
+    public String displayManageEmployeesForm(Model model, HttpServletRequest request, HttpServletResponse response,
+                                             @CookieValue(value = "user", defaultValue = "none") String username) {
+
+        RedirectIfNotLoggedIn(username, response);
+
+        Employee employee = employeeDao.findByEmail(username);
+
+        if (!employee.getJobTitle().toLowerCase().equals("manager") &&
+                !employee.getJobTitle().toLowerCase().equals("assistant manager")) {
+            model.addAttribute("title", "Employee Profile");
+            model.addAttribute("employee", employee);
+            if (username.equals("none")) {
+                model.addAttribute("username", "guest");
+            }
+            else {
+                model.addAttribute("username", employee.getFirstName());
+            }
+
+            return "employee/index";
+        }
+
+        model.addAttribute("title", "Employee Profile");
+        model.addAttribute("employee", employee);
+        model.addAttribute("employees", employeeDao.findAll());
+        if (username.equals("none")) {
+            model.addAttribute("username", "guest");
+        }
+        else {
+            model.addAttribute("username", employee.getFirstName());
+        }
+
+        return "employee/manage";
+
+    }
+
+    @RequestMapping(value = "remove-employee", method = RequestMethod.POST)
+    public String processDeactivateEmployee(Model model, HttpServletRequest request, HttpServletResponse response,
+                                             @RequestParam("employeeIdForRemoval") int employeeId,
+                                             @CookieValue(value = "user", defaultValue = "none") String username) {
+
+        Employee employee = employeeDao.findOne(employeeId);
+
+        employee.setActiveToInactive();
+
+        employeeDao.save(employee);
+
+        Iterable<RequestOff> deactivatedEmployeeRequestOffs = requestOffDao.findByEmployeeId(employeeId);
+
+        for (RequestOff requestOff : deactivatedEmployeeRequestOffs) {
+            requestOff.setActiveToInactive();
+            requestOffDao.save(requestOff);
+        }
+
+        model.addAttribute("title", "Employee Profile");
+        model.addAttribute("employee", employeeDao.findByEmail(username));
+        model.addAttribute("employees", employeeDao.findAll());
+        if (username.equals("none")) {
+            model.addAttribute("username", "guest");
+        }
+        else {
+            model.addAttribute("username",employeeDao.findByEmail(username).getFirstName());
+        }
+
+        return "employee/manage";
     }
 
 }

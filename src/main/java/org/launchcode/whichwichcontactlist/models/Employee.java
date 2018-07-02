@@ -22,7 +22,7 @@ public class Employee {
     private String lastName;
 
     @NotNull
-    @Size(min = 5, max = 25, message = "Last name cannot be empty")
+    @Size(min = 5, max = 25, message = "Job title cannot be empty")
     private String jobTitle;
 
     @NotNull
@@ -36,6 +36,8 @@ public class Employee {
     @NotNull
     @Size(min = 5, max = 20, message = "Please enter a valid password")
     private String password;
+
+    private boolean isActive;
 
     @OneToMany
     @JoinColumn(name = "employee_id")
@@ -102,5 +104,21 @@ public class Employee {
 
     public void setPassword(String password) {
         this.password = password;
+    }
+
+    public boolean isActive() {
+        return isActive;
+    }
+
+    public void setActive() {
+        isActive = true;
+    }
+
+    public void setActiveToInactive() {
+        isActive = false;
+    }
+
+    public void setActive(boolean active) {
+        isActive = active;
     }
 }

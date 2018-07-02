@@ -7,28 +7,24 @@
 <nav th:replace="fragments :: navigation"></nav>
 
 <div class="container">
-<h1 th:text="${title}">Default Title</h1>
-
-<br />
+<div class="container">
+    <h1 th:text="${title}">Default Title</h1>
+</div>
 
 <table class="table table-hover">
+
     <tr>
-        <td><strong>Date</strong></td>
-        <td><strong>Start Time</strong></td>
-        <td><strong>End Time</strong></td>
-        <td><strong>Remove</strong></td>
+        <th>Employee</th>
+        <th>Date</th>
+        <th>Start Time</th>
+        <th>End Time</th>
     </tr>
-    <tr th:each="requestOff : ${requestsOff}">
+    <tr th:each="requestOff : ${requestOffs}">
         <div th:if="${requestOff.isActive()}">
+            <td th:text="${requestOff.employee.firstName} + ' ' + ${requestOff.employee.lastName}"></td>
             <td th:text="${requestOff.getHumanReadableDate()}"></td>
             <td th:text="${requestOff.getHumanReadableStartTime()}"></td>
             <td th:text="${requestOff.getHumanReadableEndTime()}"></td>
-            <td>
-                <form method="post" action="request-off/remove-request">
-                    <input type="hidden" name="requestOffIdForRemoval" th:value="${requestOff.id}" />
-                    <input type="submit" value="Remove" />
-                </form>
-            </td>
         </div>
     </tr>
 </table>

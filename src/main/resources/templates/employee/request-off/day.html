@@ -2,17 +2,19 @@
 <html lang="en" xmlns:th="http://www.thymeleaf.org/">
 <head th:replace="fragments :: head"></head>
 
-<body class="container">
-
-<h1 th:text="${title}">Default Title</h1>
+<body>
 
 <nav th:replace="fragments :: navigation"></nav>
 
+<div class="container">
+<h1 th:text="${title}">Default Title</h1>
 
-<form method="post" action="day" class="form req-off-form" th:object="${requestOff}">
+<form method="post" action="day" class="form req-off-form">
+    <span th:text="${dateError}" class="error"></span>
     <div class="form-group">
-        <label th:for="date">Start Date:</label>
-        <input class="form-control" type="date" th:field="*{date}" />
+        <label th:for="startDate">Start Date:</label>
+        <input class="form-control" name="startDate" type="date" th:value="${startDate}" />
+
     </div>
     <div class="form-group">
         <label th:for="endDate">End Date:</label>
@@ -23,6 +25,6 @@
 
     <input type="submit" value="Submit Request" />
 </form>
-
+</div>
 </body>
 </html>
