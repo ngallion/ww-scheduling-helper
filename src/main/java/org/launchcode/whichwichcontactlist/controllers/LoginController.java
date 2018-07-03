@@ -46,7 +46,7 @@ public class LoginController {
         }
 
         Cookie cookie = new Cookie("user", loginAttempt.getUsername());
-        cookie.setPath("../");
+        cookie.setPath("/");
         response.addCookie(cookie);
 
         return "redirect:home";

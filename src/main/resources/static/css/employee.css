@@ -11,6 +11,10 @@ h1.small-table-page {
 
 }
 
+.table-responsive {
+    border: none;
+}
+
 .container div.title-head {
     text-align: center;
 }
