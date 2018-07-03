@@ -13,10 +13,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
 import java.sql.Date;
 import java.time.LocalDate;
-import java.time.LocalTime;
 import java.util.ArrayList;
 
 @Controller
@@ -105,7 +103,6 @@ public class ViewRequestOffsController {
                 + " " +localDate.getMonth() + " " + localDate.getDayOfMonth());
 
         model.addAttribute("username",employeeDao.findByEmail(username).getFirstName());
-
 
         return "view-requests/by-day";
 

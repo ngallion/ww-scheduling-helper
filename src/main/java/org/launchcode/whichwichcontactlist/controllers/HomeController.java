@@ -9,9 +9,7 @@ import org.springframework.web.bind.annotation.CookieValue;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
 import java.util.ArrayList;
-import java.util.List;
 
 @Controller
 @RequestMapping(value = "home")
@@ -41,7 +39,6 @@ public class HomeController {
     public String displayHomePage(Model model, @CookieValue(value = "user", defaultValue = "none") String username,
                                   HttpServletResponse response){
 
-
         if (!userIsLoggedIn(username)) {
             return "redirect:login";
         }
@@ -60,9 +57,6 @@ public class HomeController {
         model.addAttribute("employees", activeEmployees);
         ProvideUserNameInWelcomeMessage(model, username);
 
-
         return "home/index";
-
     }
-
 }

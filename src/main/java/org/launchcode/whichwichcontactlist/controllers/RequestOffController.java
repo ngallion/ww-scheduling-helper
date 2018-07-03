@@ -16,6 +16,7 @@ import java.io.IOException;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.Period;
+import java.time.format.DateTimeParseException;
 
 @Controller
 @RequestMapping("employee/request-off")
@@ -122,35 +123,40 @@ public class RequestOffController {
             return "employee/request-off/day";
         }
 
-//        if(errors.hasErrors()) {
-//            model.addAttribute("dateError", "Must enter valid dates");
-//            return "employee/request-off/day";
-//        }
+        try {
+            Period period = Period.between(LocalDate.parse(startDate), LocalDate.parse(endDate));
 
-        Period period = Period.between(LocalDate.parse(startDate), LocalDate.parse(endDate));
+            LocalTime startTime = LocalTime.parse("08:00:00");
+            LocalTime endTime = LocalTime.parse("21:00:00");
 
-        LocalTime startTime = LocalTime.parse("08:00:00");
-        LocalTime endTime = LocalTime.parse("21:00:00");
+            for (int i = 0; i < period.getDays() + 1; i++) {
+                RequestOff requestOffPeriod = new RequestOff();
 
-        for (int i = 0; i < period.getDays() + 1; i++) {
-            RequestOff requestOffPeriod = new RequestOff();
-
-            requestOffPeriod.setDate(java.sql.Date.valueOf(LocalDate.parse(startDate).plusDays(i)));
-            requestOffPeriod.setStartTime(java.sql.Time.valueOf(startTime));
-            requestOffPeriod.setEndTime(java.sql.Time.valueOf(endTime));
-            requestOffPeriod.setActive();
-            requestOffPeriod.setEmployee(employeeDao.findOne(employeeId));
-            if (isExistingRequest(requestOffPeriod)) {
-                model.addAttribute("title", "Request Off Day");
-                model.addAttribute("employeeId", employeeId);
-                model.addAttribute("dateError", "You have already submitted this request");
-                model.addAttribute("username",employeeDao.findByEmail(username).getFirstName());
-                return "employee/request-off/day";
+                requestOffPeriod.setDate(java.sql.Date.valueOf(LocalDate.parse(startDate).plusDays(i)));
+                requestOffPeriod.setStartTime(java.sql.Time.valueOf(startTime));
+                requestOffPeriod.setEndTime(java.sql.Time.valueOf(endTime));
+                requestOffPeriod.setActive();
+                requestOffPeriod.setEmployee(employeeDao.findOne(employeeId));
+                if (isExistingRequest(requestOffPeriod)) {
+                    model.addAttribute("title", "Request Off Day");
+                    model.addAttribute("employeeId", employeeId);
+                    model.addAttribute("dateError", "You have already submitted this request");
+                    model.addAttribute("username",employeeDao.findByEmail(username).getFirstName());
+                    return "employee/request-off/day";
+                }
+                requestOffDao.save(requestOffPeriod);
             }
-            requestOffDao.save(requestOffPeriod);
+
+            return "redirect:/employee/request-off";
+        }
+        catch (DateTimeParseException e) {
+            model.addAttribute("title", "Request Off Day");
+            model.addAttribute("employeeId", employeeId);
+            model.addAttribute("error", "Please enter dates in the format MM/DD/YYYY");
+            model.addAttribute("username",employeeDao.findByEmail(username).getFirstName());
+            return "employee/request-off/day";
         }
 
-        return "redirect:/employee/request-off";
     }
 
     @RequestMapping(value = "time", method = RequestMethod.POST)
@@ -169,27 +175,35 @@ public class RequestOffController {
 
         RequestOff requestOff = new RequestOff();
 
-//        LocalDate localDate = LocalDate.parse(date);
-        LocalTime localStartTime = LocalTime.parse(startTime);
-        LocalTime localEndTime = LocalTime.parse(endTime);
+        try{
+            LocalTime localStartTime = LocalTime.parse(startTime);
+            LocalTime localEndTime = LocalTime.parse(endTime);
+            requestOff.setDate(java.sql.Date.valueOf(date));
+            requestOff.setStartTime(java.sql.Time.valueOf(localStartTime));
+            requestOff.setEndTime(java.sql.Time.valueOf(localEndTime));
+            requestOff.setActive();
+            requestOff.setEmployee(employeeDao.findOne(employeeId));
 
-        requestOff.setDate(java.sql.Date.valueOf(date));
-        requestOff.setStartTime(java.sql.Time.valueOf(localStartTime));
-        requestOff.setEndTime(java.sql.Time.valueOf(localEndTime));
-        requestOff.setActive();
-        requestOff.setEmployee(employeeDao.findOne(employeeId));
+            if (isExistingRequest(requestOff)) {
+                model.addAttribute("title", "Request Off Time");
+                model.addAttribute("employeeId", employeeId);
+                model.addAttribute("error", "You have already submitted this request");
+                model.addAttribute("username",employeeDao.findByEmail(username).getFirstName());
+                return "employee/request-off/time";
+            }
 
-        if (isExistingRequest(requestOff)) {
+            requestOffDao.save(requestOff);
+
+            return "redirect:/employee/request-off";
+        }
+        catch (DateTimeParseException e){
             model.addAttribute("title", "Request Off Time");
             model.addAttribute("employeeId", employeeId);
-            model.addAttribute("error", "You have already submitted this request");
+            model.addAttribute("error", "Please enter time in format HH:MM (AM or PM)," +
+                    "and dates in the format MM/DD/YYYY");
             model.addAttribute("username",employeeDao.findByEmail(username).getFirstName());
             return "employee/request-off/time";
         }
-
-        requestOffDao.save(requestOff);
-
-        return "redirect:/employee/request-off";
 
     }
 
