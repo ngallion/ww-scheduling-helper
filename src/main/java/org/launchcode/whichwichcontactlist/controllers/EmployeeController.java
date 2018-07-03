@@ -6,6 +6,7 @@ import org.launchcode.whichwichcontactlist.models.RequestOff;
 import org.launchcode.whichwichcontactlist.models.data.EmployeeDao;
 import org.launchcode.whichwichcontactlist.models.data.RequestOffDao;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.launchcode.whichwichcontactlist.utilities.ControllerUtilities;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -29,32 +30,34 @@ public class EmployeeController {
     @Autowired
     private RequestOffDao requestOffDao;
 
-    private void RedirectIfNotLoggedIn(String username, HttpServletResponse response) {
-        try{
-            if (username.equals("none")) {
-                response.sendRedirect("/login");
-            }
+    private boolean userIsLoggedIn(String username) {
+        if (username.equals("none")){
+            return false;
         }
-        catch (IOException e) {
-            e.getMessage();
-        }
+        return true;
+    }
 
+    public void ProvideUserNameInWelcomeMessage(Model model, String username) {
+
+        if (username.equals("none")) {
+            model.addAttribute("username", "guest");
+        }
+        else {
+            model.addAttribute("username", employeeDao.findByEmail(username).getFirstName());
+        }
     }
 
     @RequestMapping(value = "")
     public String index(Model model, HttpServletRequest request, HttpServletResponse response,
                         @CookieValue(value = "user", defaultValue = "none") String username){
 
-        RedirectIfNotLoggedIn(username, response);
-
+        if (userIsLoggedIn(username) == false) {
+            return "redirect:login";
+        }
+        ProvideUserNameInWelcomeMessage(model, username);
         model.addAttribute("title", "Employee Profile");
         model.addAttribute("employee", employeeDao.findByEmail(username));
-        if (username.equals("none")) {
-            model.addAttribute("username", "guest");
-        }
-        else {
-            model.addAttribute("username",employeeDao.findByEmail(username).getFirstName());
-        }
+
 
         return "employee/index";
 
@@ -65,7 +68,9 @@ public class EmployeeController {
                         HttpServletResponse response, HttpServletRequest request,
                         @CookieValue(value = "user", defaultValue = "none") String username){
 
-
+        if (userIsLoggedIn(username) == false) {
+            return "redirect:login";
+        }
 
         model.addAttribute("title", "Which Wich Contact List");
         model.addAttribute("employee", employeeDao.findOne(employeeId));
@@ -116,7 +121,9 @@ public class EmployeeController {
     public String displayManageEmployeesForm(Model model, HttpServletRequest request, HttpServletResponse response,
                                              @CookieValue(value = "user", defaultValue = "none") String username) {
 
-        RedirectIfNotLoggedIn(username, response);
+        if (userIsLoggedIn(username) == false) {
+            return "redirect:login";
+        }
 
         Employee employee = employeeDao.findByEmail(username);
 
@@ -124,12 +131,7 @@ public class EmployeeController {
                 !employee.getJobTitle().toLowerCase().equals("assistant manager")) {
             model.addAttribute("title", "Employee Profile");
             model.addAttribute("employee", employee);
-            if (username.equals("none")) {
-                model.addAttribute("username", "guest");
-            }
-            else {
-                model.addAttribute("username", employee.getFirstName());
-            }
+            ProvideUserNameInWelcomeMessage(model,username);
 
             return "employee/index";
         }

@@ -27,16 +27,21 @@ public class RequestOffController {
     @Autowired
     private RequestOffDao requestOffDao;
 
-    private void RedirectIfNotLoggedIn(String username, HttpServletResponse response) {
-        try{
-            if (username.equals("none")) {
-                response.sendRedirect("/login");
-            }
+    private boolean userIsLoggedIn(String username) {
+        if (username.equals("none")){
+            return false;
         }
-        catch (IOException e) {
-            e.getMessage();
-        }
+        return true;
+    }
 
+    public void ProvideUserNameInWelcomeMessage(Model model, String username) {
+
+        if (username.equals("none")) {
+            model.addAttribute("username", "guest");
+        }
+        else {
+            model.addAttribute("username", employeeDao.findByEmail(username).getFirstName());
+        }
     }
 
     private boolean isExistingRequest(RequestOff newRequest) {
@@ -56,19 +61,16 @@ public class RequestOffController {
     public String index(Model model, HttpServletResponse response, HttpServletRequest request,
                         @CookieValue(value = "user", defaultValue = "none") String username) {
 
-        RedirectIfNotLoggedIn(username, response);
+        if (userIsLoggedIn(username) == false) {
+            return "redirect:login";
+        }
+        ProvideUserNameInWelcomeMessage(model, username);
 
         Integer employeeId = employeeDao.findByEmail(username).getId();
 
         model.addAttribute("title", "Request Off");
         model.addAttribute("employeeId", employeeId);
         model.addAttribute("requestsOff", requestOffDao.findByEmployeeIdOrderByDate(employeeId));
-        if (username.equals("none")) {
-            model.addAttribute("username", "guest");
-        }
-        else {
-            model.addAttribute("username",employeeDao.findByEmail(username).getFirstName());
-        }
 
         return "employee/request-off/index";
 
@@ -78,16 +80,13 @@ public class RequestOffController {
     public String displayRequestOffDayForm(Model model, HttpServletResponse response, HttpServletRequest request,
                                            @CookieValue(value = "user", defaultValue = "none") String username) {
 
-        RedirectIfNotLoggedIn(username, response);
+        if (userIsLoggedIn(username) == false) {
+            return "redirect:login";
+        }
+        ProvideUserNameInWelcomeMessage(model, username);
 
         model.addAttribute("title", "Request Off Day");
         model.addAttribute("employeeId", employeeDao.findByEmail(username).getId());
-        if (username.equals("none")) {
-            model.addAttribute("username", "guest");
-        }
-        else {
-            model.addAttribute("username",employeeDao.findByEmail(username).getFirstName());
-        }
 
         return "employee/request-off/day";
 
@@ -97,16 +96,13 @@ public class RequestOffController {
     public String displayRequestOffTimeForm(Model model, HttpServletResponse response, HttpServletRequest request,
                                             @CookieValue(value = "user", defaultValue = "none") String username) {
 
-        RedirectIfNotLoggedIn(username, response);
+        if (userIsLoggedIn(username) == false) {
+            return "redirect:login";
+        }
+        ProvideUserNameInWelcomeMessage(model, username);
 
         model.addAttribute("title", "Request Off Time");
         model.addAttribute("employeeId", employeeDao.findByEmail(username).getId());
-        if (username.equals("none")) {
-            model.addAttribute("username", "guest");
-        }
-        else {
-            model.addAttribute("username",employeeDao.findByEmail(username).getFirstName());
-        }
         model.addAttribute(new RequestOff());
 
         return "employee/request-off/time";

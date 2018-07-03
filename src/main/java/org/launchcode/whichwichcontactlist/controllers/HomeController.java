@@ -20,16 +20,14 @@ public class HomeController {
     @Autowired
     private EmployeeDao employeeDao;
 
-    private void RedirectIfNotLoggedIn(String username, HttpServletResponse response) {
-        try{
-            if (username.equals("none")) {
-                response.sendRedirect("/login");
-            }
-        }
-        catch (IOException e) {
-            e.getMessage();
-        }
+    public void ProvideUserNameInWelcomeMessage(Model model, String username) {
 
+        if (username.equals("none")) {
+            model.addAttribute("username", "guest");
+        }
+        else {
+            model.addAttribute("username", employeeDao.findByEmail(username).getFirstName());
+        }
     }
 
     private boolean userIsLoggedIn(String username) {
@@ -60,12 +58,7 @@ public class HomeController {
 
         model.addAttribute("title", "Contact List");
         model.addAttribute("employees", activeEmployees);
-        if (username.equals("none")) {
-            model.addAttribute("username", "guest");
-        }
-        else {
-            model.addAttribute("username",employeeDao.findByEmail(username).getFirstName());
-        }
+        ProvideUserNameInWelcomeMessage(model, username);
 
 
         return "home/index";

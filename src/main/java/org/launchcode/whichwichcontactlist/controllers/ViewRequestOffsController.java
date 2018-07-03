@@ -29,34 +29,36 @@ public class ViewRequestOffsController {
     @Autowired
     RequestOffDao requestOffDao;
 
-    private void RedirectIfNotLoggedIn(String username, HttpServletResponse response) {
-        try{
-            if (username.equals("none")) {
-                response.sendRedirect("/login");
-            }
+    private boolean userIsLoggedIn(String username) {
+        if (username.equals("none")){
+            return false;
         }
-        catch (IOException e) {
-            e.getMessage();
-        }
+        return true;
+    }
 
+    public void ProvideUserNameInWelcomeMessage(Model model, String username) {
+
+        if (username.equals("none")) {
+            model.addAttribute("username", "guest");
+        }
+        else {
+            model.addAttribute("username", employeeDao.findByEmail(username).getFirstName());
+        }
     }
 
     @RequestMapping(value = "", method = RequestMethod.GET)
     public String index(Model model, HttpServletResponse response, HttpServletRequest request,
                         @CookieValue(value = "user", defaultValue = "none") String username) {
 
-        RedirectIfNotLoggedIn(username,response);
+        if (userIsLoggedIn(username) == false) {
+            return "redirect:login";
+        }
+        ProvideUserNameInWelcomeMessage(model, username);
 
         Iterable<RequestOff> requestOffs = requestOffDao.findAllByOrderByDate();
 
         model.addAttribute("requestOffs", requestOffs);
         model.addAttribute("title", "View All Requests");
-        if (username.equals("none")) {
-            model.addAttribute("username", "guest");
-        }
-        else {
-            model.addAttribute("username",employeeDao.findByEmail(username).getFirstName());
-        }
 
         return "view-requests/index";
 
@@ -66,16 +68,12 @@ public class ViewRequestOffsController {
     public String viewRequestOffByDayForm(Model model, HttpServletResponse response, HttpServletRequest request,
                                           @CookieValue(value = "user", defaultValue = "none") String username) {
 
-        RedirectIfNotLoggedIn(username,response);
+        if (userIsLoggedIn(username) == false) {
+            return "redirect:login";
+        }
+        ProvideUserNameInWelcomeMessage(model, username);
 
         model.addAttribute("title", "View Requests by Day");
-//
-        if (username.equals("none")) {
-            model.addAttribute("username", "guest");
-        }
-        else {
-            model.addAttribute("username",employeeDao.findByEmail(username).getFirstName());
-        }
 
         return "view-requests/by-day";
 
