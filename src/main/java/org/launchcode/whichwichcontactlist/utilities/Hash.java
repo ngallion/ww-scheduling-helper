@@ -4,7 +4,7 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 
 public class Hash {
-    private String hashPassword(String password) {
+    public String hashPassword(String password) {
         try {
             MessageDigest sha256 = MessageDigest.getInstance("SHA-256");
             String salt = "125hklj25123";
