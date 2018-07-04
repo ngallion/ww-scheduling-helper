@@ -22,10 +22,6 @@ public class Employee {
     private String lastName;
 
     @NotNull
-    @Size(min = 5, max = 25, message = "Job title cannot be empty")
-    private String jobTitle;
-
-    @NotNull
     @Size(min = 10, max = 10, message = "Please enter a valid phone number")
     private String phoneNumber;
 
@@ -43,13 +39,18 @@ public class Employee {
     @JoinColumn(name = "employee_id")
     private List<RequestOff> requestsOff = new ArrayList<>();
 
+    @ManyToOne
+    private Store store;
+
+    @ManyToOne
+    private JobTitle jobTitle;
+
     public Employee() {
     }
 
-    public Employee(String firstName, String lastName, String jobTitle, String phoneNumber, String email) {
+    public Employee(String firstName, String lastName, String phoneNumber, String email) {
         this.firstName = firstName;
         this.lastName = lastName;
-        this.jobTitle = jobTitle;
         this.phoneNumber = phoneNumber;
         this.email = email;
     }
@@ -74,14 +75,6 @@ public class Employee {
         this.lastName = lastName;
     }
 
-    public String getJobTitle() {
-        return jobTitle;
-    }
-
-    public void setJobTitle(String jobTitle) {
-        this.jobTitle = jobTitle;
-    }
-
     public String getPhoneNumber() {
         return phoneNumber;
     }
@@ -104,6 +97,22 @@ public class Employee {
 
     public void setPassword(String password) {
         this.password = password;
+    }
+
+    public JobTitle getJobTitle() {
+        return jobTitle;
+    }
+
+    public void setJobTitle(JobTitle jobTitle) {
+        this.jobTitle = jobTitle;
+    }
+
+    public Store getStore() {
+        return store;
+    }
+
+    public void setStore(Store store) {
+        this.store = store;
     }
 
     public boolean isActive() {

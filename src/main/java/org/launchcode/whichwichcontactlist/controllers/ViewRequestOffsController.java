@@ -1,5 +1,6 @@
 package org.launchcode.whichwichcontactlist.controllers;
 
+import org.launchcode.whichwichcontactlist.models.Employee;
 import org.launchcode.whichwichcontactlist.models.RequestOff;
 import org.launchcode.whichwichcontactlist.models.data.EmployeeDao;
 import org.launchcode.whichwichcontactlist.models.data.RequestOffDao;
@@ -53,9 +54,20 @@ public class ViewRequestOffsController {
         }
         ProvideUserNameInWelcomeMessage(model, username);
 
+        Employee loggedInEmployee = employeeDao.findByEmail(username);
+
         Iterable<RequestOff> requestOffs = requestOffDao.findAllByOrderByDate();
 
-        model.addAttribute("requestOffs", requestOffs);
+        ArrayList<RequestOff> requestOffsFromUserStore = new ArrayList<>();
+
+        for (RequestOff requestOff : requestOffs){
+            if (requestOff.getEmployee().getStore().equals(loggedInEmployee.getStore()) &&
+                    requestOff.isActive()){
+                requestOffsFromUserStore.add(requestOff);
+            }
+        }
+
+        model.addAttribute("requestOffs", requestOffsFromUserStore);
         model.addAttribute("title", "View All Requests");
 
         return "view-requests/index";
@@ -87,18 +99,20 @@ public class ViewRequestOffsController {
             return "view-requests/by-day";
         }
 
+        Employee loggedInEmployee = employeeDao.findByEmail(username);
+
         LocalDate localDate = LocalDate.parse(date);
 
         Iterable<RequestOff> requestOffs = requestOffDao.findByDate(Date.valueOf(localDate));
         ArrayList<RequestOff> activeRequestOffs = new ArrayList<>();
 
         for (RequestOff requestOff : requestOffs) {
-            if (requestOff.isActive()) {
+            if (requestOff.isActive() && requestOff.getEmployee().getStore().equals(loggedInEmployee.getStore())) {
                 activeRequestOffs.add(requestOff);
             }
         }
 
-        model.addAttribute("requestOffs", requestOffDao.findByDate(Date.valueOf(localDate)));
+        model.addAttribute("requestOffs", activeRequestOffs);
         model.addAttribute("title", "Requests for " + localDate.getDayOfWeek()
                 + " " +localDate.getMonth() + " " + localDate.getDayOfMonth());
 

@@ -2,18 +2,25 @@ package org.launchcode.whichwichcontactlist.controllers;
 
 
 import org.launchcode.whichwichcontactlist.models.Employee;
+import org.launchcode.whichwichcontactlist.models.JobTitle;
 import org.launchcode.whichwichcontactlist.models.RequestOff;
+import org.launchcode.whichwichcontactlist.models.Store;
 import org.launchcode.whichwichcontactlist.models.data.EmployeeDao;
+import org.launchcode.whichwichcontactlist.models.data.JobTitleDao;
 import org.launchcode.whichwichcontactlist.models.data.RequestOffDao;
+import org.launchcode.whichwichcontactlist.models.data.StoreDao;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.Errors;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
+import java.util.ArrayList;
+import java.util.List;
 
 @Controller
 @RequestMapping("employee")
@@ -24,6 +31,12 @@ public class EmployeeController {
 
     @Autowired
     private RequestOffDao requestOffDao;
+
+    @Autowired
+    private StoreDao storeDao;
+
+    @Autowired
+    private JobTitleDao jobTitleDao;
 
     private boolean userIsLoggedIn(String username) {
         if (username.equals("none")){
@@ -40,6 +53,19 @@ public class EmployeeController {
         else {
             model.addAttribute("username", employeeDao.findByEmail(username).getFirstName());
         }
+    }
+
+    public boolean IsValidStoreCode(Employee employee, String storeCode, Iterable<Store> stores) {
+
+        boolean isValid = false;
+
+        for (Store store : stores){
+            if (store.getCode().equals(storeCode)) {
+                isValid = true;
+            }
+        }
+
+        return isValid;
     }
 
     @RequestMapping(value = "")
@@ -77,6 +103,7 @@ public class EmployeeController {
     public String displayAddEmployeeForm(Model model) {
 
         model.addAttribute("title", "Create New Employee Profile");
+        model.addAttribute("jobTitles", jobTitleDao.findAll());
         model.addAttribute(new Employee());
 
 
@@ -86,7 +113,8 @@ public class EmployeeController {
 
     @RequestMapping(value = "add", method = RequestMethod.POST)
     public String processAddEmployeeForm(Model model, @ModelAttribute @Valid Employee employee, Errors errors,
-                                         @RequestParam String verifyPassword, @RequestParam String storeId) {
+                                         @RequestParam String verifyPassword, @RequestParam String storeCode,
+                                         @RequestParam int jobTitleId, HttpServletResponse response) {
 
         if (errors.hasErrors()) {
             model.addAttribute("title", "Create New Employee Profile");
@@ -98,17 +126,30 @@ public class EmployeeController {
             return "employee/add";
         }
 
-        if (!storeId.equals("chesterfield317")) {
+        Iterable<Store> stores = storeDao.findAll();
+
+        if (IsValidStoreCode(employee, storeCode, stores)) {
+            employee.setStore(storeDao.findOneByCode(storeCode));
+        }
+        else {
             model.addAttribute("title", "Create New Employee Profile");
-            model.addAttribute("storeIdError", "Incorrect store id");
+            model.addAttribute("storeCodeError", "Incorrect store code");
             return "employee/add";
         }
+
+        JobTitle jobTitle = jobTitleDao.findOne(jobTitleId);
+
+        employee.setJobTitle(jobTitle);
 
         employee.setActive();
 
         employeeDao.save(employee);
 
-        return "redirect:" + employee.getId();
+        Cookie cookie = new Cookie("user", employee.getEmail());
+        cookie.setPath("/");
+        response.addCookie(cookie);
+
+        return "redirect:employee";
 
     }
 
@@ -122,8 +163,8 @@ public class EmployeeController {
 
         Employee employee = employeeDao.findByEmail(username);
 
-        if (!employee.getJobTitle().toLowerCase().equals("manager") &&
-                !employee.getJobTitle().toLowerCase().equals("assistant manager")) {
+        if (!employee.getJobTitle().getName().toLowerCase().equals("manager") &&
+                !employee.getJobTitle().getName().toLowerCase().equals("assistant manager")) {
             model.addAttribute("title", "Employee Profile");
             model.addAttribute("employee", employee);
             ProvideUserNameInWelcomeMessage(model,username);

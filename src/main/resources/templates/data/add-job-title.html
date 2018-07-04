@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org/">
+<head th:fragment="head">
+    <meta charset="UTF-8"/>
+    <title th:text="${title}">Which Wich Contact</title>
+
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" />
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <script type="text/javascript" src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    <link rel="stylesheet" th:href="@{/css/employee.css}" />
+
+</head>
+<body>
+
+    <div class="container">
+
+        <h1 th:text="${title}"></h1>
+
+        <p th:unless="${jobTitles} and ${jobTitles.size()}">No Job Titles</p>
+
+        <ul th:each="aJobTitle : ${jobTitles}">
+            <li th:text="${aJobTitle.name}"></li>
+        </ul>
+
+        <form method="post" action="add-job-title" th:object="${jobTitle}">
+            <div class="form-group">
+                <label th:for="name">Name</label>
+                <input class="form-control" th:field="*{name}" />
+                <span th:errors="*{name}" class="error"></span>
+            </div>
+            <input type="submit" value="Add Job Title" />
+        </form>
+    </div>
+
+</body>
+</html>

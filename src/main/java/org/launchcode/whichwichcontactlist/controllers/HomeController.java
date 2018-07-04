@@ -43,12 +43,14 @@ public class HomeController {
             return "redirect:login";
         }
 
+        Employee loggedInEmployee = employeeDao.findByEmail(username);
+
         Iterable<Employee> employees = employeeDao.findAll();
 
         ArrayList<Employee> activeEmployees = new ArrayList<>();
 
         for (Employee employee : employees) {
-            if (employee.isActive()) {
+            if (employee.isActive() && employee.getStore().equals(loggedInEmployee.getStore())) {
                 activeEmployees.add(employee);
             }
         }
