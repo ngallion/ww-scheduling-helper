@@ -3,6 +3,7 @@ package org.launchcode.whichwichcontactlist.controllers;
 import org.launchcode.whichwichcontactlist.models.Employee;
 import org.launchcode.whichwichcontactlist.models.Login;
 import org.launchcode.whichwichcontactlist.models.data.EmployeeDao;
+import org.launchcode.whichwichcontactlist.utilities.Password;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -38,11 +39,25 @@ public class LoginController {
 
         Employee attemptedEmployeeLogin = employeeDao.findByEmail(loginAttempt.getUsername());
 
-        if (attemptedEmployeeLogin == null ||
-                !attemptedEmployeeLogin.getPassword().equals(loginAttempt.getPassword()) ||
-                !attemptedEmployeeLogin.isActive()) {
-            model.addAttribute("error", "Invalid username or password");
-            return "login/index";
+        Password attemptedPassword = new Password();
+
+        try {
+            if (attemptedEmployeeLogin == null) {
+                model.addAttribute("error", "Invalid username or password");
+                return "login/index";
+            }
+            else {
+                boolean isValidLogin = attemptedPassword.check(loginAttempt.getPassword(),
+                        attemptedEmployeeLogin.getPassword());
+
+                if (isValidLogin == false) {
+                    model.addAttribute("error", "Invalid username or password");
+                    return "login/index";
+                }
+            }
+        }
+        catch (java.lang.Exception e){
+            System.out.println(e.getMessage());
         }
 
         Cookie cookie = new Cookie("user", loginAttempt.getUsername());

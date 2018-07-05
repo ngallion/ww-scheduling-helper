@@ -62,7 +62,7 @@ public class ViewRequestOffsController {
 
         for (RequestOff requestOff : requestOffs){
             if (requestOff.getEmployee().getStore().equals(loggedInEmployee.getStore()) &&
-                    requestOff.isActive()){
+                    requestOff.isActive() && requestOff.getDate().after(Date.valueOf(LocalDate.now()))){
                 requestOffsFromUserStore.add(requestOff);
             }
         }

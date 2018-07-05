@@ -16,7 +16,7 @@
 
     <h1 th:text="${title}"></h1>
 
-    <p th:unless="${stores} and ${stores.size()}">No Job Titles</p>
+    <p th:unless="${stores} and ${stores.size()}">No Stores</p>
 
     <ul th:each="aStore : ${stores}">
         <li th:text="${aStore.name} + ':' + ${aStore.code}"></li>
@@ -33,7 +33,7 @@
             <input class="form-control" th:field="*{code}" />
             <span th:errors="*{code}" class="error"></span>
         </div>
-        <input type="submit" value="Add Job Title" />
+        <input type="submit" value="Add Store" />
     </form>
 </div>
 

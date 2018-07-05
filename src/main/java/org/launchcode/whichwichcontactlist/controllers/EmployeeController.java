@@ -9,6 +9,7 @@ import org.launchcode.whichwichcontactlist.models.data.EmployeeDao;
 import org.launchcode.whichwichcontactlist.models.data.JobTitleDao;
 import org.launchcode.whichwichcontactlist.models.data.RequestOffDao;
 import org.launchcode.whichwichcontactlist.models.data.StoreDao;
+import org.launchcode.whichwichcontactlist.utilities.Password;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -116,15 +117,32 @@ public class EmployeeController {
                                          @RequestParam String verifyPassword, @RequestParam String storeCode,
                                          @RequestParam int jobTitleId, HttpServletResponse response) {
 
+        Password password = new Password();
+
         if (errors.hasErrors()) {
             model.addAttribute("title", "Create New Employee Profile");
+            model.addAttribute("jobTitles", jobTitleDao.findAll());
             return "employee/add";
         }
         if (!verifyPassword.equals(employee.getPassword())) {
             model.addAttribute("title", "Create New Employee Profile");
+            model.addAttribute("jobTitles", jobTitleDao.findAll());
             model.addAttribute("verifyError", "Passwords must match");
             return "employee/add";
         }
+
+        try {
+            String hashedPassword = password.getSaltedHash(employee.getPassword());
+            employee.setPassword(hashedPassword);
+        }
+        catch (java.lang.Exception e) {
+            System.out.println(e);
+            model.addAttribute("title", "Create New Employee Profile");
+            model.addAttribute("jobTitles", jobTitleDao.findAll());
+            model.addAttribute("verifyError", "Error with password. Contact administrator.");
+            return "employee/add";
+        }
+
 
         Iterable<Store> stores = storeDao.findAll();
 
@@ -133,6 +151,7 @@ public class EmployeeController {
         }
         else {
             model.addAttribute("title", "Create New Employee Profile");
+            model.addAttribute("jobTitles", jobTitleDao.findAll());
             model.addAttribute("storeCodeError", "Incorrect store code");
             return "employee/add";
         }
@@ -149,7 +168,7 @@ public class EmployeeController {
         cookie.setPath("/");
         response.addCookie(cookie);
 
-        return "redirect:employee";
+        return "redirect:";
 
     }
 

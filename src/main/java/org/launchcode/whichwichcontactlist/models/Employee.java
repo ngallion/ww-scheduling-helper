@@ -1,6 +1,7 @@
 package org.launchcode.whichwichcontactlist.models;
 
 import javax.persistence.*;
+import javax.validation.constraints.Min;
 import javax.validation.constraints.Size;
 import javax.validation.constraints.NotNull;
 import java.util.ArrayList;
@@ -30,7 +31,7 @@ public class Employee {
     private String email;
 
     @NotNull
-    @Size(min = 5, max = 20, message = "Please enter a valid password")
+    @Size(min = 8, max=300, message = "Please enter a valid password")
     private String password;
 
     private boolean isActive;

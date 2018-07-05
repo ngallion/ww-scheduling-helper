@@ -5,6 +5,7 @@ import org.springframework.format.annotation.DateTimeFormat;
 import javax.persistence.*;
 import java.sql.Date;
 import java.sql.Time;
+import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.Objects;
 
@@ -24,9 +25,12 @@ public class RequestOff {
 
     private Time endTime;
 
+    private final Date dateSubmitted;
+
     private boolean isActive;
 
     public RequestOff() {
+        this.dateSubmitted = Date.valueOf(LocalDate.now());
     }
 
     public int getId() {
@@ -47,8 +51,6 @@ public class RequestOff {
 
     public String getHumanReadableDate() {
 
-
-
         String humanReadableDate = this.date.toLocalDate().getDayOfWeek().toString().substring(0,3) + ", " +
                 this.date.toLocalDate().getMonth().toString() + " " +
                 this.date.toLocalDate().getDayOfMonth();
@@ -59,6 +61,10 @@ public class RequestOff {
 
     public void setDate(Date date) {
         this.date = date;
+    }
+
+    public Date getDateSubmitted() {
+        return dateSubmitted;
     }
 
     public Time getStartTime() {
