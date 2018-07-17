@@ -16,15 +16,13 @@
     <tr>
         <th>Employee</th>
         <th>Date</th>
-        <th>Start Time</th>
-        <th>End Time</th>
+        <th>Time</th>
     </tr>
     <tr th:each="requestOff : ${requestOffs}">
         <div th:if="${requestOff.isActive()}">
             <td th:text="${requestOff.employee.firstName} + ' ' + ${requestOff.employee.lastName}"></td>
             <td th:text="${requestOff.getHumanReadableDate()}"></td>
-            <td th:text="${requestOff.getHumanReadableStartTime()}"></td>
-            <td th:text="${requestOff.getHumanReadableEndTime()}"></td>
+            <td th:text="${requestOff.getHumanReadableStartTime() + '-' + requestOff.getHumanReadableEndTime()}"></td>
         </div>
     </tr>
 </table>

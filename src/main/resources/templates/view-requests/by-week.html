@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org/">
+<head th:replace="fragments :: head"></head>
+
+<body>
+
+<nav th:replace="fragments :: navigation"></nav>
+
+<div class="container">
+    <h1 th:text="${title}">Default Title</h1>
+
+    <form method="post" action="by-week">
+        <select name="weekToView">
+            <option th:each="week,iter : ${viewableWeeks}"
+                    th:text="${week}"
+                    th:value="${iter.index}"></option>
+        </select>
+        <input type="submit" value="View Week" />
+    </form>
+    <br />
+
+    <table class="table table-hover">
+        <tr>
+            <td><strong>Employee</strong></td>
+            <td><strong>Date</strong></td>
+            <td><strong>Time</strong></td>
+        </tr>
+        <tr th:each="requestOff : ${requestOffs}">
+            <div th:if="${requestOff.isActive()}">
+                <td th:text="${requestOff.employee.firstName} + ' ' + ${requestOff.employee.lastName}"></td>
+                <td th:text="${requestOff.getHumanReadableDate()}"></td>
+                <td th:text="${requestOff.getHumanReadableStartTime() + '-' + requestOff.getHumanReadableEndTime()}"></td>
+            </div>
+        </tr>
+    </table>
+</div>
+</body>
+</html>

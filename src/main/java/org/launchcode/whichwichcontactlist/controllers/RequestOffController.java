@@ -35,7 +35,7 @@ public class RequestOffController {
         return true;
     }
 
-    public void ProvideUserNameInWelcomeMessage(Model model, String username) {
+    private void ProvideUserNameInWelcomeMessage(Model model, String username) {
 
         if (username.equals("none")) {
             model.addAttribute("username", "guest");
@@ -115,7 +115,7 @@ public class RequestOffController {
                                            @RequestParam("endDate") String endDate, @RequestParam int employeeId,
                                            @CookieValue(value = "user", defaultValue = "none") String username) {
 
-        if (startDate == "" || endDate == "") {
+        if (startDate.equals("") || endDate.equals("")) {
             model.addAttribute("title", "Request Off Day");
             model.addAttribute("employeeId", employeeId);
             model.addAttribute("dateError", "Must enter start and end date");
@@ -165,7 +165,7 @@ public class RequestOffController {
                                             @RequestParam int employeeId,
                                             @CookieValue(value = "user", defaultValue = "none") String username) {
 
-        if (date == "" || startTime == "" || endTime == "") {
+        if (date.equals("") || startTime.equals("") || endTime.equals("")) {
             model.addAttribute("title", "Request Off Time");
             model.addAttribute("employeeId", employeeId);
             model.addAttribute("error", "Must enter a value for all fields");
